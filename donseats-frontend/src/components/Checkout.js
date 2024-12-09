@@ -14,6 +14,7 @@ const Checkout = () => {
   const { user } = useContext(AuthContext);
   const [paymentMade, setPaymentMade] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   console.log(cartItems);
   useEffect(() => {
@@ -76,7 +77,7 @@ const Checkout = () => {
         restaurant: restaurant || "Unknown Restaurant",
       };
 
-      const response = await axios.post("/api/bagelsOrder", orderData);
+      const response = await axios.post(`${API_URL}/api/bagelsOrder`, orderData);
       console.log("Order placed:", response.data);
       const orderId = response.data.orderId;
 
