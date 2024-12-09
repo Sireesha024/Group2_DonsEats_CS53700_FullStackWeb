@@ -1,15 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const path = require('path');
-
-require("dotenv").config();
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
-
+app.use(cors());
 const admin = require("firebase-admin");
 const multer = require("multer"); // For handling multipart/form-data
 const {
@@ -19,12 +11,9 @@ const {
   getDownloadURL,
 } = require("firebase-admin/storage"); // Import from Firebase Admin SDK
 app.use(express.json());
-//const serviceAccount = require("./serviceAccountKey.json"); // Correct path is crucial
+const serviceAccount = require("./serviceAccountKey.json"); // Correct path is crucial
 // const functions = require('firebase-functions');
 
-const serviceAccount = JSON.parse(
-  Buffer.from(process.env.FIREBASE_CREDENTIALS, 'base64').toString('utf8')
-);
 
 admin.initializeApp({
   // Use admin.initializeApp
@@ -36,14 +25,6 @@ const db = admin.firestore();
 const storage = getStorage(); // Initialize Storage *after* initializing the app.
 
 const upload = multer({ storage: multer.memoryStorage() });
-
-// Serve static files from the React app
-// app.use(express.static(path.join(__dirname, '../donseats-frontend/build')));
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../donseats-frontend/build', 'index.html'));
-// });
-
 
 const donsRoutes = require("./donsRoutes"); // Import the Dons routes
 app.use("/api/dons", donsRoutes);
@@ -159,6 +140,41 @@ app.put("/api/updateMenuItem", async (req, res) => {
   }
 });
 
+app.delete('/api/deleteMenuItem', async (req, res) => {
+  try {
+      const { item, category, subcategory } = req.body;  // Get data from request body
+    //  console.log(req.body);
+      
+      // if (!title || !category || !subcategory) {
+      //     return res.status(400).json({ error: 'Title, category, and subcategory are required.' });
+      // }
+
+
+      const snapshot = await db.collection('menuItems')
+          .where('title', '==', item)
+          .where('category', '==', category)
+          .where('subcategory', '==', subcategory)
+          .get();
+
+      if (snapshot.empty) {
+        // console.log("Snapshot empty");
+          return res.status(404).json({ error: 'Menu item not found.' });
+      }
+
+      console.log("Before delete");
+      const docToDelete = snapshot.docs[0];
+      await docToDelete.ref.delete();
+      console.log("After delete");
+
+      res.json({ message: 'Menu item deleted successfully.' }); // 200 OK is implicit
+
+  } catch (error) {
+
+      console.error('Error deleting menu item:', error);
+      res.status(500).json({ error: 'Failed to delete menu item.' });
+
+  }
+});
 
 
 app.post("/api/requestNewDish", async (req, res) => {
@@ -184,7 +200,7 @@ app.post("/api/requestNewDish", async (req, res) => {
       .status(201)
       .json({
         message: "Dish request submitted successfully",
-        requestId: requestDocRef.id,
+        // requestId: requestDocRef.id,
       });
   } catch (error) {
     console.error("Error adding dish request:", error);
@@ -239,8 +255,7 @@ app.post("/api/submitFeedback", async (req, res) => {
     res
       .status(201)
       .json({
-        message: "Feedback submitted successfully",
-        feedbackId: feedbackDocRef.id,
+        message: "Feedback submitted successfully"
       });
   } catch (error) {
     console.error("Error submitting feedback:", error);
@@ -307,6 +322,7 @@ app.get('/api/feedback/:restaurantId', async (req, res) => {
 
 app.post('/api/bagelsOrder', async (req, res) => {
   try {
+    console.log("Request Body:", req.body);
     const { userId, items, status, orderPickupTime,restaurant } = req.body;
 
     // Generate a unique order ID (you can use various methods like UUIDs)
@@ -435,5 +451,6 @@ app.get('/api/bagelsOrder/user/:userId', async (req, res) => {  // New endpoint 
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // exports.donseats_backend = functions.https.onRequest(app);
+module.exports = { app, server }; 
