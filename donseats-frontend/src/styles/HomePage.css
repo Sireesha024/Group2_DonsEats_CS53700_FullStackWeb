@@ -69,21 +69,13 @@
   color: #e67e22; /* Neutral text color */
   margin-right: 40px;
 }
-.homepage .header__user .logout-icon {
-  background-color: transparent;
+.homepage .header__user .logout-btn, .homepage .header__user .login-btn {
+  padding: 10px;
   border: none;
-  font-size: 1.8rem; /* Icon size */
-  color: #e67e22; /* Primary color for the icon */
+  background-color: #e67e22;
+  color: #fff;
   cursor: pointer;
-  transition: color 0.3s ease;
-}
-.homepage .header__user .logout-icon:hover {
-  color: #cf6d1a; /* Slightly darker color on hover */
-}
-.homepage .header__user .logout-icon i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 5px;
 }
 .homepage .content__image {
   flex: 1;

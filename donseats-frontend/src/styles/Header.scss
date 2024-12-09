@@ -27,7 +27,7 @@
 /* Logo Styling */
 .logo h1 {
   font-size: 24px;
-  color: #ff7e00;
+  color: #e67e22;
   font-weight: bold;
 }
 
@@ -90,22 +90,22 @@
 }
 
 .login-button {
-  margin-left: 15px;
+  // margin-left: 15px;
   padding: 8px 16px;
-  background-color: #ff7e00;
+  background-color: #e67e22;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 14px;
   cursor: pointer;
 }
 
 .login-button:hover {
-  background-color: #ff7e00;
+  background-color: #e67e22;
 }
 
 .logout-button {
-  background-color: #ff7e00;
+  background-color: #e67e22;
   margin-left: 15px;
   padding: 8px 16px;
   color: #fff;
@@ -118,7 +118,7 @@
 /* Operational Time Styling */
 .operational-time {
   padding: 10px 20px;
-  background-color: #ff7e00;
+  background-color: #e67e22;
   color: #fff;
   text-align: center;
   font-size: 14px;
@@ -169,5 +169,4 @@
 
 .restraunt-header-menu-buttons{
   display:flex;
-  margin-top: 15px;
 }

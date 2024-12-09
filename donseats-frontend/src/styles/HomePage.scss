@@ -86,28 +86,17 @@
       color: #e67e22; /* Neutral text color */
       margin-right: 40px;
     }
-  
-    .logout-icon {
-      background-color: transparent;
-      border: none;
-      font-size: 1.8rem; /* Icon size */
-      color: #e67e22; /* Primary color for the icon */
-      cursor: pointer;
-      transition: color 0.3s ease;
-  
-      &:hover {
-        color: #cf6d1a; /* Slightly darker color on hover */
-      }
-  
-      i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
 
+    .logout-btn, .login-btn {
+      padding: 10px;
+      border: none;
+      background-color: #e67e22;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+
+    }
   }
-  
 
   .content__image {
   flex: 1;

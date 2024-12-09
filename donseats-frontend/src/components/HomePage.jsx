@@ -89,9 +89,7 @@ const HomePage = () => {
             ) : user ? (
               <div className="user-menu">
                 <span className="username">Welcome, {user.displayName || user.email}!</span>
-                <div className="logout-icon" onClick={handleLogout}>
-                  <i className="fas fa-sign-out-alt"></i>
-                </div>
+                <button className="logout-btn" onClick={handleLogout}>logout</button>
               </div>
             ) : (
               <button className="login-btn" onClick={handleLoginRedirect}>

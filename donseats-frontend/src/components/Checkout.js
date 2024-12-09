@@ -15,7 +15,7 @@ const Checkout = () => {
   const [paymentMade, setPaymentMade] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
-  // console.log(cartItems);
+  console.log("user",user);
   useEffect(() => {
     if (menuItems && Object.keys(cartItems).length > 0) {
       const newTotalPrice = calculateTotalPrice();
@@ -118,19 +118,18 @@ const Checkout = () => {
           return (
             itemData && (
               <li key={itemName} className="checkout-item">
-  <img src={itemData.imageUrl} alt={itemName} className="checkout-item-image" />
-  <div className="checkout-item-details">
-    <span className="delete-icon" onClick={() => removeItemFromCart(itemName)}>
-      <i className="fas fa-times"></i>
-    </span>
-    <span className="item-name">{itemName}</span> {/* Applied class to the item name */}
-    <div className="quantity-price">
-      <span className="item-quantity">Quantity: {quantity}</span>
-      <span className="item-price">Price: ${itemData.price}</span>
-    </div>
-  </div>
-</li>
-
+                <img src={itemData.imageUrl} alt={itemName} className="checkout-item-image" />
+                <div className="checkout-item-details">
+                  <span className="delete-icon" onClick={() => removeItemFromCart(itemName)}>
+                    <i className="fas fa-times"></i>
+                  </span>
+                  <span className="item-name">{itemName}</span> {/* Applied class to the item name */}
+                  <div className="quantity-price">
+                    <span className="item-quantity">Quantity: {quantity}</span>
+                    <span className="item-price">Price: ${itemData.price}</span>
+                  </div>
+                </div>
+              </li>
             )
           );
         })}
@@ -139,23 +138,23 @@ const Checkout = () => {
       {/* Total Price */}
       <h3>Total: ${totalPrice}</h3>
 
-      <button onClick={handleScheduleOrder}>Schedule Order</button>
-      {orderType === "scheduled" && (
-        <input
-          className="schedule_input"
-          type="datetime-local" // Use datetime-local for combined date and time
-          value={scheduledTime}
-          onChange={(e) => setScheduledTime(e.target.value)}
-          min={new Date().toISOString().slice(0, 16)} // Set minimum to current date and time
-        />
-      )}
+          <button className="scheduled-button" onClick={handleScheduleOrder}>Schedule Order</button>
+          {orderType === "scheduled" && (
+            <input
+              className="schedule_input"
+              type="datetime-local" // Use datetime-local for combined date and time
+              value={scheduledTime}
+              onChange={(e) => setScheduledTime(e.target.value)}
+              min={new Date().toISOString().slice(0, 16)} // Set minimum to current date and time
+            />
+          )}
 
-<button onClick={handlePayNowClick} disabled={paymentMade}>
+            <button className="payment-button" onClick={handlePayNowClick} disabled={paymentMade}>
                 {paymentMade ? "Payment Complete" : "Pay Now (Simulated)"}
             </button>
 
           
-            <button onClick={handleOrderNow} disabled={!paymentMade}>
+            <button className="ordernow-button" onClick={handleOrderNow} disabled={!paymentMade}>
                 Order Now
             </button>
 
