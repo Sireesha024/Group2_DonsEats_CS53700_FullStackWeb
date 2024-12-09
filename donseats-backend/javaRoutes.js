@@ -296,9 +296,9 @@ router.get("/menuItems", async (req, res) => {
 
 
 
-  router.get('/javaOrder', async (req, res) => {
+  router.get('/javaOrders', async (req, res) => {
     try {
-        const bagelsOrderRef = db.collection('javaOrder');
+        const bagelsOrderRef = db.collection('bagelsOrder').where('restaurant', '==', "Java Spot");
         const snapshot = await bagelsOrderRef.get();
   
   
@@ -331,7 +331,7 @@ router.get("/menuItems", async (req, res) => {
         const orderId = req.params.orderId;
         const { status } = req.body;
   
-        const orderRef = db.collection('javaOrder').doc(orderId);
+        const orderRef = db.collection('bagelsOrder').doc(orderId);
         const doc = await orderRef.get();
   
   
@@ -361,7 +361,7 @@ router.get("/menuItems", async (req, res) => {
   router.get('/javaOrder/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
     try {
         const userId = req.params.userId;  // Get userId from the URL
-        const bagelsOrderRef = db.collection('javaOrder').where('userId', '==', userId); // Filter by userId
+        const bagelsOrderRef = db.collection('bagelsOrder').where('userId', '==', userId); // Filter by userId
         const snapshot = await bagelsOrderRef.get();
   
         if (snapshot.empty) {

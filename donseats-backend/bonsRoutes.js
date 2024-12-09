@@ -260,7 +260,7 @@ router.get("/menuItems", async (req, res) => {
       // Generate a unique order ID (you can use various methods like UUIDs)
       const orderId = generateUniqueId(); //  Implement this function (see below)
   
-      const orderDocRef = await db.collection('bonsOrder').doc(orderId).set({ // Use doc(orderId) to set ID. Use set instead of add to manually set the doc ID
+      const orderDocRef = await db.collection('bagelsOrder').doc(orderId).set({ // Use doc(orderId) to set ID. Use set instead of add to manually set the doc ID
         orderId, // Store orderId in document
         userId,
         items,
@@ -296,9 +296,9 @@ router.get("/menuItems", async (req, res) => {
 
 
 
-  router.get('/donsOrder', async (req, res) => {
+  router.get('/donsOrders', async (req, res) => {
     try {
-        const bagelsOrderRef = db.collection('bonsOrder');
+        const bagelsOrderRef = db.collection('bonsOrder').where('restaurant', '==', "Bon Bon's Coffee");
         const snapshot = await bagelsOrderRef.get();
   
   
@@ -331,7 +331,7 @@ router.get("/menuItems", async (req, res) => {
         const orderId = req.params.orderId;
         const { status } = req.body;
   
-        const orderRef = db.collection('bonsOrder').doc(orderId);
+        const orderRef = db.collection('bagelsOrder').doc(orderId);
         const doc = await orderRef.get();
   
   
@@ -361,7 +361,7 @@ router.get("/menuItems", async (req, res) => {
   router.get('/bonsOrder/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
     try {
         const userId = req.params.userId;  // Get userId from the URL
-        const bagelsOrderRef = db.collection('bonsOrder').where('userId', '==', userId); // Filter by userId
+        const bagelsOrderRef = db.collection('bagelsOrder').where('userId', '==', userId); // Filter by userId
         const snapshot = await bagelsOrderRef.get();
   
         if (snapshot.empty) {
