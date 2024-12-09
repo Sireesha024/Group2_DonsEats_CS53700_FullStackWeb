@@ -136,7 +136,7 @@ const Dashboard = () => {
   
     try {
       // const { title, category, subcategory } = item;
-        const response = await axios.delete(`${API_URL}api/deleteMenuItem`, {  // Send data in request body
+        const response = await axios.delete(`${API_URL}/api/deleteMenuItem`, {  // Send data in request body
             data: { item, category, subcategory }
         });
   
