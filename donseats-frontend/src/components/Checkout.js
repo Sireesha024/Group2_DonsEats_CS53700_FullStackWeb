@@ -13,9 +13,9 @@ const Checkout = () => {
   const [scheduledTime, setScheduledTime] = useState("");
   const { user } = useContext(AuthContext);
   const [paymentMade, setPaymentMade] = useState(false);
-  const API_URL = process.env.REACT_APP_API_URL;
+  const [showModal, setShowModal] = useState(false); 
 
-  console.log("user",user);
+  console.log(cartItems);
   useEffect(() => {
     if (menuItems && Object.keys(cartItems).length > 0) {
       const newTotalPrice = calculateTotalPrice();
@@ -64,6 +64,10 @@ const Checkout = () => {
   };
 
   const handleOrderNow = async () => {
+    if (!user) {
+      setShowModal(true); // Show the modal instead of alert
+      return;
+    }
     try {
       const orderData = {
         userId: user.uid,
@@ -74,7 +78,7 @@ const Checkout = () => {
       };
 
       const response = await axios.post(
-        `${API_URL}/api/bagelsOrder`,
+        "/api/bagelsOrder",
         orderData
       );
       console.log("Order placed:", response.data);
@@ -107,6 +111,19 @@ const Checkout = () => {
     <div className="checkout-container">
       <h2>Checkout</h2>
 
+      {showModal && (
+        <div className="modal">  {/* Add a CSS class for styling */}
+          <div className="modal-content"> {/* Add a CSS class for styling */}
+            <p>Please log in to place an order.</p>
+            <button onClick={() => {
+              setShowModal(false);
+              navigate('/login');
+            }}>Go to Login</button>
+            <button onClick={() => setShowModal(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
       {/* Item List */}
       <ul className="checkout-items">
         {Object.entries(cartItems).map(([itemName, quantity]) => {
@@ -118,18 +135,19 @@ const Checkout = () => {
           return (
             itemData && (
               <li key={itemName} className="checkout-item">
-                <img src={itemData.imageUrl} alt={itemName} className="checkout-item-image" />
-                <div className="checkout-item-details">
-                  <span className="delete-icon" onClick={() => removeItemFromCart(itemName)}>
-                    <i className="fas fa-times"></i>
-                  </span>
-                  <span className="item-name">{itemName}</span> {/* Applied class to the item name */}
-                  <div className="quantity-price">
-                    <span className="item-quantity">Quantity: {quantity}</span>
-                    <span className="item-price">Price: ${itemData.price}</span>
-                  </div>
-                </div>
-              </li>
+  <img src={itemData.imageUrl} alt={itemName} className="checkout-item-image" />
+  <div className="checkout-item-details">
+    <span className="delete-icon" onClick={() => removeItemFromCart(itemName)}>
+      <i className="fas fa-times"></i>
+    </span>
+    <span className="item-name">{itemName}</span> {/* Applied class to the item name */}
+    <div className="quantity-price">
+      <span className="item-quantity">Quantity: {quantity}</span>
+      <span className="item-price">Price: ${itemData.price}</span>
+    </div>
+  </div>
+</li>
+
             )
           );
         })}
@@ -138,23 +156,23 @@ const Checkout = () => {
       {/* Total Price */}
       <h3>Total: ${totalPrice}</h3>
 
-          <button className="scheduled-button" onClick={handleScheduleOrder}>Schedule Order</button>
-          {orderType === "scheduled" && (
-            <input
-              className="schedule_input"
-              type="datetime-local" // Use datetime-local for combined date and time
-              value={scheduledTime}
-              onChange={(e) => setScheduledTime(e.target.value)}
-              min={new Date().toISOString().slice(0, 16)} // Set minimum to current date and time
-            />
-          )}
+      <button onClick={handleScheduleOrder}>Schedule Order</button>
+      {orderType === "scheduled" && (
+        <input
+          className="schedule_input"
+          type="datetime-local" // Use datetime-local for combined date and time
+          value={scheduledTime}
+          onChange={(e) => setScheduledTime(e.target.value)}
+          min={new Date().toISOString().slice(0, 16)} // Set minimum to current date and time
+        />
+      )}
 
-            <button className="payment-button" onClick={handlePayNowClick} disabled={paymentMade}>
+<button onClick={handlePayNowClick} disabled={paymentMade}>
                 {paymentMade ? "Payment Complete" : "Pay Now (Simulated)"}
             </button>
 
           
-            <button className="ordernow-button" onClick={handleOrderNow} disabled={!paymentMade}>
+            <button onClick={handleOrderNow} disabled={!paymentMade}>
                 Order Now
             </button>
 
