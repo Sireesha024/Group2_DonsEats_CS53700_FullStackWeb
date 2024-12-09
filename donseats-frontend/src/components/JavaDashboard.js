@@ -39,12 +39,11 @@ const JavaDashBoard = () => {
   const [reviews, setReviews] = useState([]);
   const [dishRequests, setDishRequests] = useState([]);
   const [feedback, setFeedback] = useState([]);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/java/menuItems`); // Replace with your backend endpoint
+        const response = await fetch("/api/java/menuItems"); // Replace with your backend endpoint
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -74,7 +73,7 @@ const JavaDashBoard = () => {
       formData.append("description", newMenuItem.description);
 
       const response = await axios.post(
-        `${API_URL}/api/java/addMenuItem`,
+        "/api/java/addMenuItem",
         formData,
         {
           headers: {
@@ -110,16 +109,35 @@ const JavaDashBoard = () => {
     }
   };
 
-  const handleDeleteMenuItem = async (itemId) => {
+  const handleDeleteMenuItem = async (item,category,subcategory) => {  // Pass the whole item object
+  
     try {
-      await axios.delete(`${API_URL}/api/java/menuItem/${itemId}`); // Send DELETE to the server
-      // Update local state (remove the deleted item)
-      const updatedMenuItems = { ...menuItems };
-      delete updatedMenuItems[itemId]; // Assuming itemId becomes the key
-      setMenuItems(updatedMenuItems);
-      alert("Menu Item deleted successfully");
+      // const { title, category, subcategory } = item;
+        const response = await axios.delete('/api/java/deleteMenuItem', {  // Send data in request body
+            data: { item, category, subcategory }
+        });
+  
+        if (response.status != 200) {
+          throw new Error("Network response was not ok " + response.status + response.statusText);
+        }
+        alert("Menu Item deleted successfully");
+        // Update local state to remove the deleted item:
+        setMenuItems(prevMenuItems => {
+          const updatedMenuItems = { ...prevMenuItems };
+          // Find and remove the item:
+          const categoryItems = updatedMenuItems[category][subcategory];
+          updatedMenuItems[category][subcategory] = categoryItems.filter(i => i.title !== item);
+  
+          return updatedMenuItems;
+        });
+  
+  
+  
     } catch (error) {
-      // ... handle error
+        console.error("Error deleting menu item:", error);
+        alert("Error deleting menu item: " + error.message);
+  
+  
     }
   };
 
@@ -136,7 +154,7 @@ const JavaDashBoard = () => {
       };
 
       const response = await axios.put(
-        `${API_URL}/api/java/menuItem`,
+        "/api/java/menuItem",
         dataToUpdate,
         {
           headers: {
@@ -177,7 +195,7 @@ const JavaDashBoard = () => {
     const fetchDishRequests = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/api/java/javaSpot`
+          "/api/java/javaSpot"
         ); // Use axios.get()
         setDishRequests(response.data);
       } catch (error) {
@@ -192,7 +210,7 @@ const JavaDashBoard = () => {
     const fetchFeedback = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/api/feedback/java`
+          "/api/feedback/java"
         ); // Fetch feedback for the specific restaurant
         setFeedback(response.data);
       } catch (error) {
@@ -207,7 +225,7 @@ const JavaDashBoard = () => {
   useEffect(() => {
     const fetchPendingOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/java/javaOrders`);
+        const response = await axios.get("/api/java/javaOrders"); // Replace with your actual endpoint
 
         // Check response status
         if (response.status === 200) {
@@ -238,7 +256,7 @@ const JavaDashBoard = () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await axios.put(
-        `${API_URL}/api/java/javaOrders/${orderId}`, // Make sure this is your Bons order update endpoint
+        `/api/java/javaOrders/${orderId}`, // Make sure this is your Bons order update endpoint
         { status: newStatus }
       );
 
@@ -393,7 +411,7 @@ const JavaDashBoard = () => {
                       <li key={item.title}>
                         {item.title} - ${item.price}{" "}
                         <button
-                          onClick={() => handleDeleteMenuItem(item.title)}
+                          onClick={() => handleDeleteMenuItem(item.title,category,subcategory)}
                         >
                           Delete
                         </button>

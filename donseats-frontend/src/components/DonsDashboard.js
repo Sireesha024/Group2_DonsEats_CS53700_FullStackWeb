@@ -40,12 +40,11 @@ const DonsDashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [dishRequests, setDishRequests] = useState([]);
   const [feedback, setFeedback] = useState([]);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/dons/menuItems`); // Replace with your backend endpoint
+        const response = await fetch("/api/dons/menuItems"); // Replace with your backend endpoint
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -75,7 +74,7 @@ const DonsDashboard = () => {
       formData.append("description", newMenuItem.description);
 
       const response = await axios.post(
-        `${API_URL}/api/dons/addMenuItem`,
+        "/api/dons/addMenuItem",
         formData,
         {
           headers: {
@@ -111,16 +110,35 @@ const DonsDashboard = () => {
     }
   };
 
-  const handleDeleteMenuItem = async (itemId) => {
+  const handleDeleteMenuItem = async (item,category,subcategory) => {  // Pass the whole item object
+  
     try {
-      await axios.delete(`${API_URL}/api/dons/deleteMenuItem/${itemId}`); // Send DELETE to the server
-      // Update local state (remove the deleted item)
-      const updatedMenuItems = { ...menuItems };
-      delete updatedMenuItems[itemId]; // Assuming itemId becomes the key
-      setMenuItems(updatedMenuItems);
-      alert("Menu Item deleted successfully");
+      // const { title, category, subcategory } = item;
+        const response = await axios.delete('/api/dons/deleteMenuItem', {  // Send data in request body
+            data: { item, category, subcategory }
+        });
+  
+        if (response.status != 200) {
+          throw new Error("Network response was not ok " + response.status + response.statusText);
+        }
+        alert("Menu Item deleted successfully");
+        // Update local state to remove the deleted item:
+        setMenuItems(prevMenuItems => {
+          const updatedMenuItems = { ...prevMenuItems };
+          // Find and remove the item:
+          const categoryItems = updatedMenuItems[category][subcategory];
+          updatedMenuItems[category][subcategory] = categoryItems.filter(i => i.title !== item);
+  
+          return updatedMenuItems;
+        });
+  
+  
+  
     } catch (error) {
-      // ... handle error
+        console.error("Error deleting menu item:", error);
+        alert("Error deleting menu item: " + error.message);
+  
+  
     }
   };
 
@@ -137,7 +155,7 @@ const DonsDashboard = () => {
       };
 
       const response = await axios.put(
-        `${API_URL}/api/dons/updateMenuItem`,
+        "/api/dons/updateMenuItem",
         dataToUpdate,
         {
           headers: {
@@ -178,7 +196,7 @@ const DonsDashboard = () => {
     const fetchDishRequests = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/api/dons/dishRequests`
+          "/api/dons/dishRequests"
         ); // Use axios.get()
         setDishRequests(response.data);
       } catch (error) {
@@ -193,7 +211,7 @@ const DonsDashboard = () => {
     const fetchFeedback = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/api/feedback/dons`
+          "/api/feedback/dons"
         ); // Fetch feedback for the specific restaurant
         setFeedback(response.data);
       } catch (error) {
@@ -208,7 +226,7 @@ const DonsDashboard = () => {
   useEffect(() => {
     const fetchPendingOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/dons/donsOrders`); // Replace with your actual endpoint
+        const response = await axios.get("/api/dons/donsOrders"); // Replace with your actual endpoint
 
         // Check response status
         if (response.status === 200) {
@@ -239,7 +257,7 @@ const DonsDashboard = () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       await axios.put(
-        `${API_URL}/api/dons/donsOrders/${orderId}`, // Make sure this is your dons order update endpoint
+        `/api/dons/donsOrders/${orderId}`, // Make sure this is your dons order update endpoint
         { status: newStatus }
       );
 
@@ -394,7 +412,7 @@ const DonsDashboard = () => {
                       <li key={item.title}>
                         {item.title} - ${item.price}{" "}
                         <button
-                          onClick={() => handleDeleteMenuItem(item.title)}
+                          onClick={() => handleDeleteMenuItem(item.title,category,subcategory)}
                         >
                           Delete
                         </button>
