@@ -296,9 +296,9 @@ router.get("/menuItems", async (req, res) => {
 
 
 
-  router.get('/donsOrders', async (req, res) => {
+  router.get('/bonsOrders', async (req, res) => {
     try {
-        const bagelsOrderRef = db.collection('bonsOrder').where('restaurant', '==', "Bon Bon's Coffee");
+        const bagelsOrderRef = db.collection('bagelsOrder').where('restaurant', '==', "Bon Bon's Coffee");
         const snapshot = await bagelsOrderRef.get();
   
   
@@ -326,7 +326,7 @@ router.get("/menuItems", async (req, res) => {
   
   });
 
-  router.put('/donsOrder/:orderId', async (req, res) => {  // New route for updating order status
+  router.put('/bonsOrders/:orderId', async (req, res) => {  // New route for updating order status
     try {
         const orderId = req.params.orderId;
         const { status } = req.body;
@@ -358,7 +358,7 @@ router.get("/menuItems", async (req, res) => {
   });
 
 
-  router.get('/bonsOrder/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
+  router.get('/bonsOrders/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
     try {
         const userId = req.params.userId;  // Get userId from the URL
         const bagelsOrderRef = db.collection('bagelsOrder').where('userId', '==', userId); // Filter by userId

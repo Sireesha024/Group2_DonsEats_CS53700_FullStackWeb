@@ -294,7 +294,7 @@ function generateUniqueId() {
   // return uuidv4();
 }
 
-router.get('/donsOrder', async (req, res) => {
+router.get('/donsOrders', async (req, res) => {
   try {
       const bagelsOrderRef = db.collection('bagelsOrder').where('restaurant', '==', "Don's at Walb");
       const snapshot = await bagelsOrderRef.get();
@@ -325,7 +325,7 @@ router.get('/donsOrder', async (req, res) => {
 });
 
 
-router.put('/donsOrder/:orderId', async (req, res) => {  // New route for updating order status
+router.put('/donsOrders/:orderId', async (req, res) => {  // New route for updating order status
   try {
       const orderId = req.params.orderId;
       const { status } = req.body;
@@ -357,7 +357,7 @@ router.put('/donsOrder/:orderId', async (req, res) => {  // New route for updati
 });
 
 
-router.get('/donsOrder/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
+router.get('/donsOrders/user/:userId', async (req, res) => {  // New endpoint to fetch orders by User Id
   try {
       const userId = req.params.userId;  // Get userId from the URL
       const bagelsOrderRef = db.collection('bagelsOrder').where('userId', '==', userId); // Filter by userId

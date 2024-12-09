@@ -326,7 +326,7 @@ router.get("/menuItems", async (req, res) => {
   
   });
 
-  router.put('/javaOrder/:orderId', async (req, res) => {  // New route for updating order status
+  router.put('/javaOrders/:orderId', async (req, res) => {  // New route for updating order status
     try {
         const orderId = req.params.orderId;
         const { status } = req.body;
